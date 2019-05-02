@@ -2346,6 +2346,15 @@ abstract class REST_Controller extends \CI_Controller {
             return FALSE;
         }
     }
+
+    protected function _doDeleteFolder($params)
+    {
+        if(rmdir($params)) {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
     
     public function is_logged_in()
     {

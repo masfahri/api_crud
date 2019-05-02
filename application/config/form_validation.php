@@ -117,6 +117,69 @@ $config = array(
         ),
         
     ),
+    'create_vendor' => array(
+        array(
+            'field'     => 'nama_vendor',
+            'label'     => 'Nama vendor',
+            'rules'     => 'required|callback_exists_vendor',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'exists_vendor' => '%s Sudah Ada',
+            ]
+        ),
+        array(
+            'field'     => 'email_vendor',
+            'label'     => 'Email vendor',
+            'rules'     => 'required|is_unique[vendor.email_vendor]|valid_email',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'is_unique' => '%s Sudah Ada',
+                'valid_email' => '%s Tidak Valid',
+            ]
+        ),
+        array(
+            'field'     => 'nomor_vendor',
+            'label'     => 'Nomor vendor',
+            'rules'     => 'required|is_unique[vendor.nomor_vendor]|numeric|min_length[10]|max_length[13]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'is_unique' => '%s Sudah Ada',
+                'numeric' => '%s Tidak Valid',
+                'min_length' => '%s Kurang Karakter',
+                'max_length' => '%s Kelebihan Karakter',
+            ]
+        ),
+        array(
+            'field'     => 'alamat_vendor',
+            'label'     => 'Alamat vendor',
+            'rules'     => 'required|max_length[255]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                // 'min_length' => '%s Kurang Karakter',
+                'max_length' => '%s Kelebihan Karakter',
+            ]
+        ),
+    ),
+    
+    'gambar' => array(
+        array(
+            'field'     => 'action',
+            'label'     => 'Action',
+            'rules'     => 'required',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+            ]
+        ),
+        array(
+            'field'     => 'id',
+            'label'     => 'Id',
+            'rules'     => 'required',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+            ]
+        ),
+        
+    ),
 );
 
 

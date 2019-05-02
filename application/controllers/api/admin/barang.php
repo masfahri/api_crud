@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require APPPATH . '/libraries/REST_Controller.php';
 use Restserver\Libraries\REST_Controller;
 
-class Kategori extends REST_Controller {
+class Barang extends REST_Controller {
 
     public function __construct($config='rest') 
     {
@@ -17,7 +17,7 @@ class Kategori extends REST_Controller {
     }
 
    public function index_post() {
-      $nama_kategori = $this->post('nama_kategori');
+      $nama_kategori = $this->post('nama_barang');
       if ($this->is_logged_in() != null){
          if($this->form_validation->run('create_kategori') == FALSE) {
             $output = $this->form_validation->error_array();
@@ -27,7 +27,7 @@ class Kategori extends REST_Controller {
                'nama_kategori' => $nama_kategori,
                'gambar_kategori' => 'null');
             if (!$this->Crud->create('kategori', $insertData)) {
-               return $this->set_response($error, REST_Controller::HTTP_OK);       
+               return $this->set_response($error, REST_Controller::HTTP_BAD_REQUEST);       
             }else{
                return $this->set_response('Sukses Menambahkan Kategori', REST_Controller::HTTP_BAD_REQUEST);       
             }
