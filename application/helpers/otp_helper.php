@@ -84,7 +84,7 @@ class OTP
     public static function validateTimeStamp($timeout)
 	{
         $CI =& get_instance();
-		if ((now() - $timeout < 120)) {
+		if ((now() - $timeout < 216000)) {
             return true;
         }else{
             return false;

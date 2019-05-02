@@ -18,6 +18,17 @@ class Crud extends CI_Model {
         return $this->db->get($table);
     }
 
+    public function count($table, $key)
+    {
+        $this->db->where($key);
+        $qry = $this->db->get($table);
+        if ($qry->num_rows() > 0) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function where($table, $key)
     {
         if (!empty($key['id'])) {
@@ -101,6 +112,18 @@ class Crud extends CI_Model {
         $this->db->where($key);
         $query = $this->db->get($table);
         if( $query->num_rows() > 0 ){
+            return true;
+        }else{
+            return false;  
+        }
+    }
+
+    public function like($table, $like)
+    {
+        $this->db->like($like);
+        $query = $this->db->get($table);
+        if( $query->num_rows() > 0 ){
+            var_dump($query->result_array());die;
             return true;
         }else{
             return false;  

@@ -95,6 +95,28 @@ $config = array(
             ]
         ),
     ),
+    'create_kategori' => array(
+        array(
+            'field'     => 'nama_kategori',
+            'label'     => 'Nama Kategori',
+            'rules'     => 'required|callback_exists_kategori',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'exists_kategori' => '%s Sudah Ada',
+            ]
+        ),
+    ),
+    'update_kategori' => array(
+        array(
+            'field'     => 'id_kategori',
+            'label'     => 'Id Kategori',
+            'rules'     => 'required',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+            ]
+        ),
+        
+    ),
 );
 
 

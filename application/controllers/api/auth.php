@@ -101,11 +101,12 @@ class Auth extends REST_Controller {
                 $arrToken = array('token' => $cek[0]['encrypt']);
                 $decrypt = Crypt::decrypt_($arrToken);
                 $validate = OTP::validateParamsOtp($decrypt->enc, $decrypt->timestamp);
-                if ($validate['validate'] != true) {
+                if ('08'.$validate['otp'] != $username) {
                     $output['message'] = 'OTP EXPIRED';
                 }else{
                     $output['message'] = 'SUKSES MASUK';
-                    $output['validate'] = '08'.$validate['otp'];
+                    $output['data'] = $data[0];
+                    $this->session->set_userdata('nomor_hp', $username);
                 }
                 $this->set_response($output, REST_Controller::HTTP_OK);
             }

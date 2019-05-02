@@ -2297,4 +2297,59 @@ abstract class REST_Controller extends \CI_Controller {
         ]);
         return true;
     }
+
+    protected function _doUpload($params, $namaProduk, $namaFolder)
+    {
+        for ($i=0; $i < count($params); $i++) { 
+            if (isset($params[$i])) {
+                if ($params[$i]['size'] > 0) {
+                    $name = str_replace(" ","_", $namaProduk)."_".$i;
+
+                    $filename= $_FILES['gambar'.$i]['name'];
+                    $file_ext = pathinfo($filename,PATHINFO_EXTENSION);
+                    
+                    $gambarUpload = 'gambar'.$i;
+                    $arrayName = array($gambarUpload => $name.'.'.$file_ext);
+                    
+                    $config['upload_path'] = '___/upload/'.$namaFolder;
+                    $config['allowed_types'] = 'gif|jpg|png|jpg';
+                    $config['max_size'] = 200000;
+                    $config['max_height'] = 10000;
+                    $config['max_width'] = 10000;
+                    $config['overwrite'] = TRUE;
+                    $config['file_name'] = $name;
+                    $config['max_filename'] = 25;
+                    $this->load->library('upload');
+                    $this->upload->initialize($config);
+                    if (!is_dir($config['upload_path'])) {
+                        mkdir($config['upload_path'], 0777, TRUE);
+                    }
+                    if (!$this->upload->do_upload($gambarUpload)) {
+                       $error = $this->upload->display_errors();
+                        $this->set_response([
+                            'status' => FALSE,
+                            'message' => $error
+                        ], 404);
+                        return $return  = $this->set_response($error, REST_Controller::HTTP_BAD_REQUEST);
+                    }
+                }
+            }
+        }
+        return json_encode($arrayName);
+    }
+
+    protected function _doDeleteFile($params)
+    {
+        if(unlink($params['path'].$params['gambar'])) {
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    
+    public function is_logged_in()
+    {
+        $user = $this->session->userdata('nomor_hp');
+        return isset($user);
+    }
 }
