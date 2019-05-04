@@ -160,6 +160,90 @@ $config = array(
             ]
         ),
     ),
+    'create_produk' => array(
+        array(
+            'field'     => 'nama_produk',
+            'label'     => 'Nama Produk',
+            'rules'     => 'required|callback_exists_produk',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'exists_produk' => '%s Sudah Ada',
+            ]
+        ),
+        array(
+            'field'     => 'deskripsi_produk_short',
+            'label'     => 'Deskripsi Produk',
+            'rules'     => 'required|max_length[255]|min_length[15]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'min_length' => '%s Kurang Karakter',
+                'max_length' => '%s Kelebihan Karakter',
+            ]
+        ),
+        array(
+            'field'     => 'kategori_id',
+            'label'     => 'Kategori',
+            'rules'     => 'required|numeric|callback_exists_kategori',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Numeric',
+                'exists_kategori' => '%s Tidak Ada',
+            ]
+        ),
+        array(
+            'field'     => 'vendor_id',
+            'label'     => 'Vendor',
+            'rules'     => 'required|numeric|callback_exists_vendor',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Numeric',
+                'exists_vendor' => '%s Tidak Ada',
+            ]
+        ),
+    ),
+    'create_detail_produk' => array(
+        array(
+            'field'     => 'produk_id',
+            'label'     => 'Produk',
+            'rules'     => 'required|numeric|callback_cekProduk|is_unique[detail_produk.produk_id]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Angka',
+                'cekProduk' => '%s Tidak Ada',
+                'is_unique' => '%s Sudah Ditambahkan',
+            ]
+        ),
+        array(
+            'field'     => 'harga_produk',
+            'label'     => 'Harga Produk',
+            'rules'     => 'required|numeric|greater_than[0.1000000]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'is_unique' => '%s Sudah Ada',
+                'greater_than' => '%s Tidak Boleh Melebihi {greated_than}',
+            ]
+        ),
+        array(
+            'field'     => 'satuan_produk',
+            'label'     => 'Satuan Produk',
+            'rules'     => 'required|min_length[2]|max_length[5]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'min_length' => '%s Kurang Karakter',
+                'max_length' => '%s Kelebihan Karakter',
+            ]
+        ),
+        array(
+            'field'     => 'stok_produk',
+            'label'     => 'Stok',
+            'rules'     => 'required|numeric|greater_than[0.100]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Numeric',
+                'greater_than' => '%s Tidak Boleh Melebihi {greated_than}',
+            ]
+        ),
+    ),
     
     'gambar' => array(
         array(

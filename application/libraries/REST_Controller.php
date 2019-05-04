@@ -2309,7 +2309,7 @@ abstract class REST_Controller extends \CI_Controller {
                     $file_ext = pathinfo($filename,PATHINFO_EXTENSION);
                     
                     $gambarUpload = 'gambar'.$i;
-                    $arrayName = array($gambarUpload => $name.'.'.$file_ext);
+                    $arrayName[] = array($gambarUpload => $name.'.'.$file_ext);
                     
                     $config['upload_path'] = '___/upload/'.$namaFolder;
                     $config['allowed_types'] = 'gif|jpg|png|jpg';
@@ -2340,20 +2340,27 @@ abstract class REST_Controller extends \CI_Controller {
 
     protected function _doDeleteFile($params)
     {
-        if(unlink($params['path'].$params['gambar'])) {
-            return TRUE;
-        }else{
-            return FALSE;
+        for ($i=0; $i < count($params['gambar']); $i++) { 
+            if(unlink($params['path'].$params['gambar'][$i]->gambar)) {
+                return TRUE;
+            }else{
+                return FALSE;
+            }
         }
     }
 
-    protected function _doDeleteFolder($params)
+    protected function _doDeleteFolder($dir)
     {
-        if(rmdir($params)) {
-            return TRUE;
-        }else{
-            return FALSE;
+        foreach(scandir($dir) as $file) {
+            if ('.' === $file || '..' === $file) continue;
+            if (is_dir("$dir/$file")) rmdir_recursive("$dir/$file");
+            else unlink("$dir/$file");
         }
+        rmdir($dir);
+    }
+
+    protected function deleteDirectory($dir) {
+        
     }
     
     public function is_logged_in()

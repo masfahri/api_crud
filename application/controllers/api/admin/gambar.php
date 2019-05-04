@@ -12,7 +12,7 @@ class Gambar extends REST_Controller {
       $this->load->library('session');
       $this->load->library('form_validation');
       $this->load->helper(array('crypt', 'jwt', 'form', 'url', 'file'));
-      $this->load->model('Crud');
+      $this->load->model(array('Crud', 'Mproduk'));
       date_default_timezone_set('Asia/Jakarta');
    }
 
@@ -43,14 +43,14 @@ class Gambar extends REST_Controller {
                $globalId = array('id' => $id);
                switch ($action) {
                   case 'kategori':
-                     $data = $this->Crud->where('kategori', $globalId);
-                     if (!$data) {
+                     $cek = $this->Crud->where('kategori', $globalId);
+                     if (!$cek) {
                         $output['error'] = 'Kategori Tidak Ada!';
                      }else{
-                        if ($data['gambar_kategori'] != 'null') {
+                        if ($cek['gambar_kategori'] != 'null') {
                            $del = array(
                               'path' => '___/upload/produk/GambarKategori/', 
-                              'gambar' => json_decode($data['gambar_kategori'])->gambar0
+                              'gambar' => json_decode($cek['gambar_kategori'])->gambar0
                            );
                            $unlink = $this->_doDeleteFile($del);
                         }
@@ -58,6 +58,7 @@ class Gambar extends REST_Controller {
                         if ($upload) {
                            $dataUpdate = array('gambar_kategori' => $upload);
                            $this->crud->update('kategori', $globalId, $dataUpdate);
+                           $data = $this->Crud->where('kategori', $globalId);
                            $output['data'] = $data;
                         }else{
                            $output['error'] = 'Something Wrong!';
@@ -67,21 +68,22 @@ class Gambar extends REST_Controller {
                   break;
                   
                   case 'vendor':
-                     $data = $this->Crud->where('vendor', $globalId);
-                     if (!$data) {
+                     $cek = $this->Crud->where('vendor', $globalId);
+                     if (!$cek) {
                         $output['error'] = 'Vendor Tidak Ada!';
                      }else{
-                        if ($data['gambar_vendor'] != 'null') {
+                        if ($cek['gambar_vendor'] != 'null') {
                            $del = array(
                               'path' => '___/upload/produk/GambarVendor/', 
-                              'gambar' => json_decode($data['gambar_vendor'])->gambar0
+                              'gambar' => json_decode($cek['gambar_vendor'])->gambar0
                            );
                            $unlink = $this->_doDeleteFile($del);
                         }
-                        $upload = $this->_doUpload($image_path, $data['nama_vendor'], 'produk/GambarVendor/'.$data['nama_vendor']);
+                        $upload = $this->_doUpload($image_path, $cek['nama_vendor'], 'produk/GambarVendor/'.$cek['nama_vendor']);
                         if ($upload) {
                            $dataUpdate = array('gambar_vendor' => $upload);
                            $this->crud->update('vendor', $globalId, $dataUpdate);
+                           $data = $this->Crud->where('vendor', $globalId);
                            $output['data'] = $data;
                         }else{
                            $output['error'] = 'Something Wrong!';
@@ -89,6 +91,74 @@ class Gambar extends REST_Controller {
                         }
                      }
                   break;
+
+                  case 'produk':
+                     $cek = $this->Crud->where('produk', $globalId);
+                     if (!$cek) {
+                        $output['error'] = 'Produk Tidak Ada!';
+                     }else{
+                        if ($cek['gambar_produk'] != 'null') {
+                           $del = array(
+                              'path' => '___/upload/produk/GambarProduk/', 
+                              'gambar' => json_decode($cek['gambar_produk'])->gambar0
+                           );
+                           $unlink = $this->_doDeleteFile($del);
+                        }
+                        $upload = $this->_doUpload($image_path, $cek['nama_produk'], 'produk/GambarProduk/'.$cek['nama_produk']);
+                        if ($upload) {
+                           $dataUpdate = array('gambar_produk' => $upload);
+                           $this->crud->update('produk', $globalId, $dataUpdate);
+                           $data = $this->Crud->where('produk', $globalId);
+                           $output['data'] = $data;
+                        }else{
+                           $output['error'] = 'Something Wrong!';
+                           return $this->set_response($output, REST_Controller::HTTP_BAD_REQUEST); 
+                        }
+                     }
+                  break;
+                  
+                  case 'detail_produk':
+                     $condition = array('produk.id' => $id);
+                     $prodId = array('produk_id' => $id);
+                     $select = array(
+                        'produk.id as produkId',
+                        'satuan_produk', 
+                        'harga_produk', 
+                        'stok_produk', 
+                        'deskripsi_produk_long', 
+                        'gambar_thumb_detail_produk', 
+                        'gambar_detail_produk',
+                        'nama_produk'
+                     );
+                     $join = array(
+                         'join' => 'produk.id= detail_produk.produk_id', 
+                         'tableJoin' => 'detail_produk'
+                     );
+                     $cek =  $this->Mproduk->getDetailBarang('produk', $condition, $join, $select);
+                     if (!$cek) {
+                        $output['error'] = 'Produk Tidak Ada!';
+                     }else{
+                        if ($cek['gambar_detail_produk'] != 'null') {
+                           $del = array(
+                              'path' => '___/upload/produk/GambarProduk/'.$cek['nama_produk'].'/Detail', 
+                              'gambar' => json_decode($cek['gambar_detail_produk'])
+                           );
+                           $unlink = $this->_doDeleteFile($del);
+                        }
+                        $upload = $this->_doUpload($image_path, $cek['nama_produk'], 'produk/GambarProduk/'.$cek['nama_produk'].'/Detail');
+                        if ($upload) {
+                           $dataUpdate = array('gambar_detail_produk' => $upload);
+                           $this->crud->update('detail_produk', $prodId, $dataUpdate);
+                           $data = $this->Crud->where('detail_produk', $prodId);
+                           $output['data'] = $data;
+                        }else{
+                           $output['error'] = 'Something Wrong!';
+                           return $this->set_response($output, REST_Controller::HTTP_BAD_REQUEST); 
+                        }
+                     }
+                  break;
+
+
                   
                   default:
                      # code...
