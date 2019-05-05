@@ -244,7 +244,40 @@ $config = array(
             ]
         ),
     ),
-    
+    'regist' => array(
+        array(
+            'field'     => 'nomor_hp',
+            'label'     => 'Nomor',
+            'rules'     => 'required|is_unique[users.nomor_hp]|is_unique[log.username]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'is_unique' => '%s Sudah Didaftarkan',
+            ]
+        ),
+        array(
+            'field'     => 'email',
+            'label'     => 'Email',
+            'rules'     => 'required|is_unique[users.email]',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'is_unique' => '%s Sudah Didaftarkan',
+            ]
+        ),
+    ),
+    'otpRegist' => array(
+        array(
+            'field'     => 'otp',
+            'label'     => 'OTP',
+            'rules'     => 'required|max_length[6]|min_length[6]|numeric',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'max_length' => '%s Kelebihan',
+                'min_length' => '%s Kurang',
+                'numeric' => '%s Hanya Angka',
+            ]
+        ),
+    ),
+
     'gambar' => array(
         array(
             'field'     => 'action',

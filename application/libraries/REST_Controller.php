@@ -2274,8 +2274,8 @@ abstract class REST_Controller extends \CI_Controller {
     {
         $CI =& get_instance();
         $data = array('username' => $params);
-        $cek = $this->Crud->where('log', $data);
-        return strtotime($cek[0]["created_at"]);
+        $cek = $this->Crud->wheres('log', $data);
+        return strtotime($cek["created_at"]);
     }
 
     public function sendSms($params, $nomor_hp)

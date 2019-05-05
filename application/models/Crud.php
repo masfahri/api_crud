@@ -123,10 +123,25 @@ class Crud extends CI_Model {
         $this->db->like($like);
         $query = $this->db->get($table);
         if( $query->num_rows() > 0 ){
-            var_dump($query->result_array());die;
+            // var_dump($query->result_array());die;
             return true;
         }else{
             return false;  
+        }
+    }
+
+    public function wheres($table, $params)
+    {
+        // var_dump($params);die;
+        foreach ($params as $key => $keys ) {
+            $this->db->where($key, $keys);
+        }
+        $query = $this->db->get($table);
+        if( $query->num_rows() > 0 ){
+            return $query->row_array();
+        }else{
+            return $query->result_array();  
+            
         }
     }
 }

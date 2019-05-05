@@ -60,6 +60,7 @@ class OTP
             $unames[] = (int)json_decode($uname)[$j];
             $otp[] = self::validateOtp($unames[$j], $dates[$j]);
         }   
+
         if (!$otp) {
             return false;
         }else{
@@ -67,8 +68,10 @@ class OTP
             if ($validate) {
                 $return['otp'] = implode("", $otp);
                 $return['validate'] = $validate;
+                return $return;
+            }else{
+                return false;
             }
-            return $return;
         }
     }
 
@@ -77,14 +80,13 @@ class OTP
         $array[] = array();
         $output = ($uname - $key) % 26;
         $return =+ $output;
-        
         return $return;
     }
 
     public static function validateTimeStamp($timeout)
 	{
         $CI =& get_instance();
-		if ((now() - $timeout < 216000)) {
+		if ((now() - $timeout < 3600)) {
             return true;
         }else{
             return false;
