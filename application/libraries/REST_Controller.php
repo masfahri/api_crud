@@ -2378,6 +2378,11 @@ abstract class REST_Controller extends \CI_Controller {
         $nomor_hp = $this->session->userdata('nomor_hp');
         $arrayName = array('nomor_hp' => $nomor_hp, );
         $user = $CI->muser->wheres('users', $arrayName);
-        return isset($user);
+        if (isset($nomor_hp)) {
+            isset($nomor_hp);
+            return true;
+        }else{
+            return false;
+        }
     }
 }

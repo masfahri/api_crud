@@ -11,10 +11,15 @@ class Cart extends REST_Controller {
         $this->load->library('form_validation');
         $this->load->helper(array('crypt', 'jwt', 'form', 'url', 'file'));
         $this->load->model(array('Crud', 'mProduk'));
-        $this->user_id = $this->session->userdata('nomor_hp');
-        $this->arrayName = array('nomor_hp' => $this->user_id);
-        $this->users = $this->crud->wheres('users', $this->arrayName);
-        $this->user_id = $this->users['id'];
+        if ($this->session->userdata('nomor_hp')) {
+            $this->user_id = $this->session->userdata('nomor_hp');
+            $this->arrayName = array('nomor_hp' => $this->user_id);
+            $this->users = $this->crud->wheres('users', $this->arrayName);
+            $this->user_id = $this->users['id'];
+        }else{
+            return $this->set_response('silahkan login terlebih dahulu', REST_Controller::HTTP_BAD_REQUEST);
+        }
+
         date_default_timezone_set('Asia/Jakarta');
     }
 

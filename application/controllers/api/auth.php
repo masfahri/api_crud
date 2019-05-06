@@ -132,7 +132,7 @@ class Auth extends REST_Controller {
 
     public function logout_post()
     {
-        if ($this->session->userdata('role') != null) {
+        if ($this->session->userdata('role') != null || $this->session->userdata('nomor_hp')) {
             $arrayName = array('username' => $this->session->userdata('nomor_hp') );
             if ( $this->crud->delete('log', $arrayName)) {
                 $this->session->sess_destroy();
