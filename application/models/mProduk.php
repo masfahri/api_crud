@@ -63,4 +63,50 @@ class Mproduk extends CI_Model {
             return $qry->result_array();
         }
     }
+
+    public function getDetailCartAll($table, $initialId, $join, $select)
+    {
+        $this->db->select($select);
+        $this->db->where($initialId);
+        foreach ($join as $key => $keys ) {
+            $this->db->join($keys['tableJoin'], $keys['join']);
+        }
+        $qry = $this->db->get($table);
+        if ($qry->num_rows() > 0) {
+            return $qry->row_array();
+        }else{
+            return $qry->result_array();
+        }
+    }
+
+    public function wheres($table, $params)
+    {
+        foreach ($params as $key => $keys ) {
+            $this->db->where($key, $keys);
+        }
+        $query = $this->db->get($table);
+        if( $query->num_rows() > 0 ){
+            return $query->row_array();
+        }else{
+            return $query->result_array();  
+            
+        }
+    }
+
+    public function getCart($table, $initialId, $select)
+    {
+        $this->db->select($select);
+        if (!empty($initialId['id'])) {
+            $this->db->where($initialId);
+        }
+        $query = $this->db->get($table);
+        if( $query->num_rows() > 0 ){
+            if( !empty($initialId['id']) ){
+                return $query->row_array();
+            }else{
+                return $query->result_array();  
+            }
+            
+        }
+    }
 }

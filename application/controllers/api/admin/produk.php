@@ -321,7 +321,7 @@ class Produk extends REST_Controller {
             $data['detail'] = array(
                 'produk_id' => $id_produk
             );
-            $cek = $this->crud->where('produk', $data['produk']);
+            $cek = $this->crud->wheres('produk', $data['produk']);
             if (!$cek) {
                return $this->set_response('Produk Tidak Ada', REST_Controller::HTTP_BAD_REQUEST); 
             }else{

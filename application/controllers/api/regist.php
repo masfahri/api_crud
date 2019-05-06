@@ -38,6 +38,7 @@ class Regist extends REST_Controller {
             );
             $insertUsers = array(
                 'username' => $nomor_hp, 
+                'nomor_hp' => $nomor_hp, 
                 'password' => Crypt::encrypt_($nomor_hp), 
                 'email' => $email, 
                 'aktivasi' => 'regist',
@@ -47,6 +48,8 @@ class Regist extends REST_Controller {
             $log = $this->crud->create('log', $insertData);
             $insert = $this->Crud->create('users', $insertUsers);
             if ($insert) {
+                $insertCus = array('users_id' => $insert);
+                $this->crud->create('customer', $insertCus);
                 $dateOtp = $this->getTimeLogin($nomor_hp);
                 $dataOtpGenerate = array(
                     'date' => $dateOtp, 
@@ -54,7 +57,7 @@ class Regist extends REST_Controller {
                 $otpGenerate = OTP::generatePamarsOtp($dataOtpGenerate);
                 if (!empty($otpGenerate)) {
                     $params = array($email, $otpGenerate['token']);
-                    $this->sendSms($otpGenerate['otp'], $nomor_hp);
+                    // $this->sendSms($otpGenerate['otp'], $nomor_hp);
                     
                     $this->session->set_userdata('token', $otpGenerate['token']);
                     

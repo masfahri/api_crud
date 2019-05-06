@@ -391,6 +391,7 @@ abstract class REST_Controller extends \CI_Controller {
         parent::__construct();
 
         $this->load->model('crud');
+        $this->load->model('muser');
 
         $this->preflight_checks();
 
@@ -2275,7 +2276,7 @@ abstract class REST_Controller extends \CI_Controller {
         $CI =& get_instance();
         $data = array('username' => $params);
         $cek = $this->Crud->wheres('log', $data);
-        return strtotime($cek["created_at"]);
+        return strtotime($cek['created_at']);
     }
 
     public function sendSms($params, $nomor_hp)
@@ -2303,7 +2304,8 @@ abstract class REST_Controller extends \CI_Controller {
         for ($i=0; $i < count($params); $i++) { 
             if (isset($params[$i])) {
                 if ($params[$i]['size'] > 0) {
-                    $name = str_replace(" ","_", $namaProduk)."_".$i;
+                    $preg = preg_replace('/\./', '_', $namaProduk);
+                    $name = str_replace(" ","_", $preg)."_".$i;
 
                     $filename= $_FILES['gambar'.$i]['name'];
                     $file_ext = pathinfo($filename,PATHINFO_EXTENSION);
@@ -2312,13 +2314,13 @@ abstract class REST_Controller extends \CI_Controller {
                     $arrayName[] = array($gambarUpload => $name.'.'.$file_ext);
                     
                     $config['upload_path'] = '___/upload/'.$namaFolder;
-                    $config['allowed_types'] = 'gif|jpg|png|jpg';
+                    $config['allowed_types'] = 'gif|jpg|png|jpeg';
                     $config['max_size'] = 200000;
                     $config['max_height'] = 10000;
                     $config['max_width'] = 10000;
                     $config['overwrite'] = TRUE;
                     $config['file_name'] = $name;
-                    $config['max_filename'] = 25;
+                    $config['max_filename'] = 100000;
                     $this->load->library('upload');
                     $this->upload->initialize($config);
                     if (!is_dir($config['upload_path'])) {
@@ -2341,7 +2343,7 @@ abstract class REST_Controller extends \CI_Controller {
     protected function _doDeleteFile($params)
     {
         for ($i=0; $i < count($params['gambar']); $i++) { 
-            if(unlink($params['path'].$params['gambar'][$i]->gambar)) {
+            if(unlink($params['path'].$params['gambar'][$i]->gambar0)) {
                 return TRUE;
             }else{
                 return FALSE;
@@ -2365,7 +2367,17 @@ abstract class REST_Controller extends \CI_Controller {
     
     public function is_logged_in()
     {
-        $user = $this->session->userdata('nomor_hp');
+        $CI =& get_instance();
+        $user = $this->session->userdata('role');
+        return isset($user);
+    }
+
+    protected function _isUser()
+    {
+        $CI =& get_instance();
+        $nomor_hp = $this->session->userdata('nomor_hp');
+        $arrayName = array('nomor_hp' => $nomor_hp, );
+        $user = $CI->muser->wheres('users', $arrayName);
         return isset($user);
     }
 }

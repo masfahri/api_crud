@@ -26,6 +26,7 @@ class Auth extends REST_Controller {
     {
         $username = $this->post('username');
         $password = $this->post('password');
+        $action = $this->post('action');
         if($this->form_validation->run('login') == FALSE) {
             $output = $this->form_validation->error_array();
             $this->set_response($output, REST_Controller::HTTP_BAD_REQUEST);
@@ -35,11 +36,14 @@ class Auth extends REST_Controller {
                 'nomor_hp' => $username, 
                 'email' => $username, 
             );
-            $data = $this->Crud->_orwhere('users', $like);
+            $data = $this->Crud->_orwhere('users', $like);    
             if (!$data) {
                 $output = 'Tidak ada user';
                 $this->set_response($output, REST_Controller::HTTP_BAD_REQUEST);
             }else{
+                if ($action == 'customer') {
+                    $password = Crypt::encrypt_($password);
+                }
                 $pass = array('password' => $password);
                 $cek = $this->Crud->login('users', $pass);
                 if (!$cek) {
@@ -57,7 +61,7 @@ class Auth extends REST_Controller {
                         'username' => $output['data'][0]['username'], 
                         'status'   => 'login', 
                     );
-                    $cek = $this->Crud->orwhere('log', $cekData);
+                    $cek = $this->Crud->wheres('log', $cekData);
                     if (!$cek) {
                         $insert = $this->Crud->create('log', $insertData);
                         if ($insert) {
@@ -70,6 +74,12 @@ class Auth extends REST_Controller {
                             if (!empty($output['code'])) {
                                 // $this->sendSms($output['otp'], $output['data'][0]['nomor_hp']);
                                 // KALO BISA SIMPAN NOMOR_HP dan USERNAME PADA SESSION
+                                $array = array(
+                                    'nomor_hp' => $username,
+                                    'password' => $output['data'][0]['password']
+                                );
+                                $this->session->set_userdata( $array );
+                                
                             }
                         }
                     }else{
@@ -84,16 +94,17 @@ class Auth extends REST_Controller {
     public function otp_post()
     {
         $otp = $this->post('otp');
-        $username = $this->post('username');
-        $where = array('username' => $username);
-        $data = $this->Crud->where('users', $where);
+        // $username = $this->post('username');
+        $username = $this->session->userdata('nomor_hp');
+        $password = $this->session->userdata('password');
+        $where = array('username' => $username, 'password' => $password);
+        $data = $this->Crud->wheres('users', $where);
         if($this->form_validation->run('otp') == FALSE) {
             $output = $this->form_validation->error_array();
             $this->set_response($output, REST_Controller::HTTP_BAD_REQUEST);
         } else {
             $like = array('otp' => $otp);
-            $key = array('username' => $data[0]['nomor_hp']);
-
+            $key = array('username' => $data['nomor_hp'], 'status' => 'aktif');
             $cek = $this->Crud->whereLike('otp', $key, $like);
             if (!$cek) {
                 $output['message'] = 'Salah OTP';
@@ -105,13 +116,33 @@ class Auth extends REST_Controller {
                     $output['message'] = 'OTP EXPIRED';
                 }else{
                     $output['message'] = 'SUKSES MASUK';
-                    $output['data'] = $data[0];
+                    $update = array('status' => 'expired');
+                    $this->crud->update('otp', $key, $update);
                     $this->session->set_userdata('nomor_hp', $username);
+                    if ($data['role'] == 1) {
+                        $this->session->set_userdata('role', 'admin');
+                    }
+                    $output['data'] = $data;
                 }
                 $this->set_response($output, REST_Controller::HTTP_OK);
             }
             $this->set_response($output, REST_Controller::HTTP_OK);
         }
+    }
+
+    public function logout_post()
+    {
+        if ($this->session->userdata('role') != null) {
+            $arrayName = array('username' => $this->session->userdata('nomor_hp') );
+            if ( $this->crud->delete('log', $arrayName)) {
+                $this->session->sess_destroy();
+            }
+            $this->set_response('sukses Logout', REST_Controller::HTTP_OK);
+        }else{
+            $this->set_response('No Session', REST_Controller::HTTP_OK);
+        }
+        
+        
     }
 
     public function exists_user($params)

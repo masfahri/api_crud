@@ -177,8 +177,8 @@ class Vendor extends REST_Controller {
             }else{
                if ($cek['gambar_vendor'] != 'null') {
                   $del = array(
-                     'path' => '___/upload/produk/GambarVendor/'.$cek['nama_vendor'].'/', 
-                     'gambar' => json_decode($cek['gambar_vendor'])->gambar0
+                     'path' => '___/upload/produk/GambarVendor/', 
+                     'gambar' => json_decode($cek['gambar_vendor'])
                   );
                   if ($this->_doDeleteFile($del)) {
                     $unlink = $this->_doDeleteFolder($del['path']);

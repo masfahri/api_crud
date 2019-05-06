@@ -135,11 +135,12 @@ class Kategori extends REST_Controller {
                if ($cek['gambar_kategori'] != 'null') {
                   $del = array(
                      'path' => '___/upload/produk/GambarKategori/', 
-                     'gambar' => json_decode($cek['gambar_kategori'])->gambar0
+                     'gambar' => json_decode($cek['gambar_kategori'])
                   );
-                  $unlink = $this->_doDeleteFile($del);
+                  if ($this->_doDeleteFile($del)) {
+                     $delete = $this->Crud->delete('kategori', $data);
+                  } 
                }
-               $delete = $this->Crud->delete('kategori', $data);
                return $this->set_response('Sukses Delete Kategori', REST_Controller::HTTP_BAD_REQUEST); 
                
             }
@@ -151,10 +152,7 @@ class Kategori extends REST_Controller {
 
    }
 
-    public function index_patch()
-    {
-        $this->session->unset_userdata('nomor_hp');
-    }
+    
 
     public function exists_kategori($key) {
         $data = array('nama_kategori' => $key);

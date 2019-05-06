@@ -24,15 +24,15 @@ $config = array(
         ),
     ),
     'otp' => array(
-        array(
-            'field'     => 'username',
-            'label'     => 'Username',
-            'rules'     => 'required|callback_exists_user',
-            'errors'    => [
-                'required' => '%s Diperlukan',
-                'exists_user' => '%s Gak Terdaftar',
-            ]
-        ),
+        // array(
+        //     'field'     => 'username',
+        //     'label'     => 'Username',
+        //     'rules'     => 'required|callback_exists_user',
+        //     'errors'    => [
+        //         'required' => '%s Diperlukan',
+        //         'exists_user' => '%s Gak Terdaftar',
+        //     ]
+        // ),
         array(
             'field'     => 'otp',
             'label'     => 'OTP',
@@ -276,6 +276,29 @@ $config = array(
                 'numeric' => '%s Hanya Angka',
             ]
         ),
+    ),
+    'create_cart' => array(
+        array(
+            'field'     => 'produk_id',
+            'label'     => 'Produk',
+            'rules'     => 'required|numeric|callback_exists',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Angka',
+                'exists' => '%s Tidak Ditemukan',
+            ]
+        ),
+        array(
+            'field'     => 'qty',
+            'label'     => 'Quantity',
+            'rules'     => 'required|numeric|callback_stok',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Angka',
+                'stok' => '%s Melebihi Stok',
+            ]
+        ),
+        
     ),
 
     'gambar' => array(
