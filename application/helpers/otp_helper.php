@@ -83,10 +83,20 @@ class OTP
         return $return;
     }
 
+    public static function validateTimeStampCheckout($timeout)
+	{
+        $CI =& get_instance();
+		if ((now() - $timeout < 600)) {
+            return true;
+        }else{
+            return false;
+        }
+	}
+    
     public static function validateTimeStamp($timeout)
 	{
         $CI =& get_instance();
-		if ((now() - $timeout < 3600)) {
+		if ((now() - $timeout < 240)) {
             return true;
         }else{
             return false;

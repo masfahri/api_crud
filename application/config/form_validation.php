@@ -300,6 +300,37 @@ $config = array(
         ),
         
     ),
+    'create_payment' => array(
+        array(
+            'field'     => 'order_id',
+            'label'     => 'Order',
+            'rules'     => 'required|numeric|callback_exists',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'numeric' => '%s Hanya Angka',
+                'exists' => '%s Tidak Ditemukan',
+            ]
+        ),
+        array(
+            'field'     => 'bank',
+            'label'     => 'Bank',
+            'rules'     => 'required',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+            ]
+        ),
+        array(
+            'field'     => 'norek',
+            'label'     => 'Nomor Rekening',
+            'rules'     => 'required|numeric',
+            'errors'    => [
+                'required' => '%s Diperlukan',
+                'Numeric' => '%s Hanya Angka',
+            ]
+        ),
+
+        
+    ),
 
     'gambar' => array(
         array(

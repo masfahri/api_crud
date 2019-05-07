@@ -23,8 +23,7 @@ class Cart extends REST_Controller {
         date_default_timezone_set('Asia/Jakarta');
     }
 
-    public function index_post ()
-    {
+    public function index_post () {
         $produk_id = $this->post('produk_id');
         $qty = $this->post('qty');
         $getProduk = $this->_getProdukDetail($produk_id);
@@ -61,8 +60,26 @@ class Cart extends REST_Controller {
         }
     }
 
-    public function index_put()
-    {
+    public function status_put() {
+        if ($this->_isUser()) {
+            $cart_id = $this->put('cart_id');
+            $key = array('id' => $cart_id, 'user_id' => $this->user_id);
+            $cartDetail = $this->crud->wheres('cart', $key);
+            if ($cartDetail != null) {
+                if ($cartDetail['status'] == 'active') {
+                    $this->crud->update('cart', $key, array('status' => 'deactive'));
+                }else{
+                    $this->crud->update('cart', $key, array('status' => 'active'));
+                }
+                return $this->set_response('Sukses Ubah Status Cart', REST_Controller::HTTP_OK);
+            }
+            return $this->set_response('Barang Tidak ada di Keranjang Belanja', REST_Controller::HTTP_BAD_REQUEST);
+        }else{
+            return $this->set_response('silahkan login terlebih dahulu', REST_Controller::HTTP_BAD_REQUEST);
+        }
+    }
+
+    public function index_put() {
         $cart_id = $this->put('cart_id');
         $qty = $this->put('qty');
         $config = [
@@ -116,8 +133,7 @@ class Cart extends REST_Controller {
         return $return;
     }
 
-    public function index_delete()
-    {
+    public function index_delete() {
         $cart_id = $this->delete('cart_id');
         $config = [
             [
@@ -156,8 +172,7 @@ class Cart extends REST_Controller {
         }
     }
 
-    public function index_get()
-    {
+    public function index_get() {
         $cart_id = $this->get('cart_id');
         if ($this->_isUser()) {
             $cekData = array('id' => $cart_id);
@@ -173,8 +188,7 @@ class Cart extends REST_Controller {
         }
     }
 
-    public function detail_get()
-    {
+    public function detail_get(){
         $cart_id = $this->get('cart_id');
         $config = [
             [
@@ -268,5 +282,17 @@ class Cart extends REST_Controller {
         }else{
            return true;
         }
+    }
+
+    public function cekUser()
+    {
+        $user = $this->crud->wheres('users', array('id' => $this->user_id));
+        if ($user) return $user;
+    }
+    
+    public function cekCus()
+    {
+        $user = $this->crud->wheres('customer', array('users_id' => $this->user_id));
+        if ($user) return $user;
     }
 }

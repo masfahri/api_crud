@@ -96,17 +96,16 @@ class Mproduk extends CI_Model {
     public function getCart($table, $initialId, $select)
     {
         $this->db->select($select);
-        if (!empty($initialId['id'])) {
+        if (!empty($initialId['user_id'])) {
             $this->db->where($initialId);
         }
         $query = $this->db->get($table);
         if( $query->num_rows() > 0 ){
-            if( !empty($initialId['id']) ){
-                return $query->row_array();
+            if( !empty($initialId['status']) ){
+                return $query->result_array();
             }else{
-                return $query->result_array();  
+                return $query->result_array();
             }
-            
         }
     }
 }
